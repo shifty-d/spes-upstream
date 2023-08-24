@@ -121,6 +121,7 @@ struct psi_trigger {
 	 * events to one per window
 	 */
 	u64 last_event_time;
+<<<<<<< HEAD
 
 	/* Refcounting to prevent premature destruction */
 	struct kref refcount;
@@ -128,6 +129,8 @@ struct psi_trigger {
 	/* Task that created the trigger */
 	char comm[TASK_COMM_LEN];
 	struct timer_list wdog_timer;
+=======
+>>>>>>> android-stable/android-4.19-stable
 };
 
 struct psi_group {

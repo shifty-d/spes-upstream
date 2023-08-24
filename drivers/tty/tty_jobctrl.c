@@ -104,7 +104,11 @@ static void __proc_set_tty(struct tty_struct *tty)
 	put_pid(tty->pgrp);
 	tty->pgrp = get_pid(task_pgrp(current));
 	tty->session = get_pid(task_session(current));
+<<<<<<< HEAD
         spin_unlock_irqrestore(&tty->ctrl_lock, flags);
+=======
+	spin_unlock_irqrestore(&tty->ctrl_lock, flags);
+>>>>>>> android-stable/android-4.19-stable
 	if (current->signal->tty) {
 		tty_debug(tty, "current tty %s not NULL!!\n",
 			  current->signal->tty->name);

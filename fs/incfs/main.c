@@ -30,10 +30,26 @@ static ssize_t corefs_show(struct kobject *kobj,
 
 static struct kobj_attribute corefs_attr = __ATTR_RO(corefs);
 
+<<<<<<< HEAD
 static ssize_t mounter_context_for_backing_rw_show(struct kobject *kobj,
 			  struct kobj_attribute *attr, char *buff)
 {
 	return scnprintf(buff, PAGE_SIZE, "%s", "supported\n");
+=======
+static ssize_t bugfix_inode_eviction_show(struct kobject *kobj,
+			 struct kobj_attribute *attr, char *buff)
+{
+	return snprintf(buff, PAGE_SIZE, "supported\n");
+}
+
+static struct kobj_attribute bugfix_inode_eviction_attr =
+	__ATTR_RO(bugfix_inode_eviction);
+
+static ssize_t mounter_context_for_backing_rw_show(struct kobject *kobj,
+			  struct kobj_attribute *attr, char *buff)
+{
+	return snprintf(buff, PAGE_SIZE, "supported\n");
+>>>>>>> android-stable/android-4.19-stable
 }
 
 static struct kobj_attribute mounter_context_for_backing_rw_attr =
@@ -41,6 +57,10 @@ static struct kobj_attribute mounter_context_for_backing_rw_attr =
 
 static struct attribute *attributes[] = {
 	&corefs_attr.attr,
+<<<<<<< HEAD
+=======
+	&bugfix_inode_eviction_attr.attr,
+>>>>>>> android-stable/android-4.19-stable
 	&mounter_context_for_backing_rw_attr.attr,
 	NULL,
 };

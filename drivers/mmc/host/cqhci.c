@@ -306,6 +306,16 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
 
 	cqhci_set_irqs(cq_host, 0);
 
+<<<<<<< HEAD
+=======
+	cqcfg |= CQHCI_ENABLE;
+
+	cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+
+	if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
+		cqhci_writel(cq_host, 0, CQHCI_CTL);
+
+>>>>>>> android-stable/android-4.19-stable
 	mmc->cqe_on = true;
 
 	if (cq_host->ops->enable)

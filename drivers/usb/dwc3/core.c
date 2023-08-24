@@ -686,15 +686,16 @@ static void dwc3_core_exit(struct dwc3 *dwc)
 {
 	dwc3_event_buffers_cleanup(dwc);
 
+	usb_phy_set_suspend(dwc->usb2_phy, 1);
+	usb_phy_set_suspend(dwc->usb3_phy, 1);
+	phy_power_off(dwc->usb2_generic_phy);
+	phy_power_off(dwc->usb3_generic_phy);
+
 	usb_phy_shutdown(dwc->usb2_phy);
 	usb_phy_shutdown(dwc->usb3_phy);
 	phy_exit(dwc->usb2_generic_phy);
 	phy_exit(dwc->usb3_generic_phy);
 
-	usb_phy_set_suspend(dwc->usb2_phy, 1);
-	usb_phy_set_suspend(dwc->usb3_phy, 1);
-	phy_power_off(dwc->usb2_generic_phy);
-	phy_power_off(dwc->usb3_generic_phy);
 	clk_bulk_disable(dwc->num_clks, dwc->clks);
 	clk_bulk_unprepare(dwc->num_clks, dwc->clks);
 	reset_control_assert(dwc->reset);
@@ -938,8 +939,13 @@ int dwc3_core_init(struct dwc3 *dwc)
 
 	if (!dwc->ulpi_ready) {
 		ret = dwc3_core_ulpi_init(dwc);
-		if (ret)
+		if (ret) {
+			if (ret == -ETIMEDOUT) {
+				dwc3_core_soft_reset(dwc);
+				ret = -EPROBE_DEFER;
+			}
 			goto err0;
+		}
 		dwc->ulpi_ready = true;
 	}
 
@@ -1239,10 +1245,10 @@ static void dwc3_get_properties(struct dwc3 *dwc)
 	u8			lpm_nyet_threshold;
 	u8			tx_de_emphasis;
 	u8			hird_threshold;
-	u8			rx_thr_num_pkt_prd;
-	u8			rx_max_burst_prd;
-	u8			tx_thr_num_pkt_prd;
-	u8			tx_max_burst_prd;
+	u8			rx_thr_num_pkt_prd = 0;
+	u8			rx_max_burst_prd = 0;
+	u8			tx_thr_num_pkt_prd = 0;
+	u8			tx_max_burst_prd = 0;
 
 	/* default to highest possible threshold */
 	lpm_nyet_threshold = 0xf;
@@ -1582,10 +1588,15 @@ skip_clk_reset:
 		}
 	}
 
+<<<<<<< HEAD
 	dwc->dwc_ipc_log_ctxt = ipc_log_context_create(NUM_LOG_PAGES,
 					dev_name(dwc->dev), 0);
 	if (!dwc->dwc_ipc_log_ctxt)
 		dev_err(dwc->dev, "Error getting ipc_log_ctxt\n");
+=======
+	dwc3_check_params(dwc);
+	dwc3_debugfs_init(dwc);
+>>>>>>> android-stable/android-4.19-stable
 
 	snprintf(dma_ipc_log_ctx_name, sizeof(dma_ipc_log_ctx_name),
 					"%s.ep_events", dev_name(dwc->dev));
@@ -1594,6 +1605,7 @@ skip_clk_reset:
 	if (!dwc->dwc_dma_ipc_log_ctxt)
 		dev_err(dwc->dev, "Error getting ipc_log_ctxt for ep_events\n");
 
+<<<<<<< HEAD
 	dwc3_instance[count] = dwc;
 	dwc->index = count;
 	count++;
@@ -1602,6 +1614,31 @@ skip_clk_reset:
 	dwc3_debugfs_init(dwc);
 	return 0;
 
+=======
+	pm_runtime_put(dev);
+
+	return 0;
+
+err5:
+	dwc3_debugfs_exit(dwc);
+	dwc3_event_buffers_cleanup(dwc);
+
+	usb_phy_set_suspend(dwc->usb2_phy, 1);
+	usb_phy_set_suspend(dwc->usb3_phy, 1);
+	phy_power_off(dwc->usb2_generic_phy);
+	phy_power_off(dwc->usb3_generic_phy);
+
+	usb_phy_shutdown(dwc->usb2_phy);
+	usb_phy_shutdown(dwc->usb3_phy);
+	phy_exit(dwc->usb2_generic_phy);
+	phy_exit(dwc->usb3_generic_phy);
+
+	dwc3_ulpi_exit(dwc);
+
+err4:
+	dwc3_free_scratch_buffers(dwc);
+
+>>>>>>> android-stable/android-4.19-stable
 err3:
 	dwc3_free_scratch_buffers(dwc);
 err2:
@@ -1626,8 +1663,19 @@ static int dwc3_remove(struct platform_device *pdev)
 {
 	struct dwc3	*dwc = platform_get_drvdata(pdev);
 
+<<<<<<< HEAD
 	dwc3_debugfs_exit(dwc);
 	dwc3_gadget_exit(dwc);
+=======
+	pm_runtime_get_sync(&pdev->dev);
+
+	dwc3_core_exit_mode(dwc);
+	dwc3_debugfs_exit(dwc);
+
+	dwc3_core_exit(dwc);
+	dwc3_ulpi_exit(dwc);
+
+>>>>>>> android-stable/android-4.19-stable
 	pm_runtime_allow(&pdev->dev);
 	pm_runtime_disable(&pdev->dev);
 
@@ -1778,7 +1826,7 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
 		if (PMSG_IS_AUTO(msg))
 			break;
 
-		ret = dwc3_core_init(dwc);
+		ret = dwc3_core_init_for_resume(dwc);
 		if (ret)
 			return ret;
 

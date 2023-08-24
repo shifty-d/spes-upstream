@@ -31,6 +31,10 @@ static void *seq_buf_alloc(unsigned long size)
 {
 	if (unlikely(size > MAX_RW_COUNT))
 		return NULL;
+<<<<<<< HEAD
+=======
+
+>>>>>>> android-stable/android-4.19-stable
 	return kvmalloc(size, GFP_KERNEL_ACCOUNT);
 }
 

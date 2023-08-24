@@ -536,7 +536,7 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
 	TP_STRUCT__entry(
 		__field(dev_t,	dev)
 		__field(ino_t,	ino)
-		__field(nid_t,	nid[3])
+		__array(nid_t,	nid, 3)
 		__field(int,	depth)
 		__field(int,	err)
 	),
@@ -830,7 +830,11 @@ TRACE_EVENT(f2fs_lookup_start,
 	TP_STRUCT__entry(
 		__field(dev_t,	dev)
 		__field(ino_t,	ino)
+<<<<<<< HEAD
 		__string(name, dentry->d_name.name)
+=======
+		__string(name,	dentry->d_name.name)
+>>>>>>> android-stable/android-4.19-stable
 		__field(unsigned int, flags)
 	),
 
@@ -857,7 +861,11 @@ TRACE_EVENT(f2fs_lookup_end,
 	TP_STRUCT__entry(
 		__field(dev_t,	dev)
 		__field(ino_t,	ino)
+<<<<<<< HEAD
 		__string(name, dentry->d_name.name)
+=======
+		__string(name,	dentry->d_name.name)
+>>>>>>> android-stable/android-4.19-stable
 		__field(nid_t,	cino)
 		__field(int,	err)
 	),
