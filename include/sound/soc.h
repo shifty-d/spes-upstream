@@ -1169,6 +1169,8 @@ struct snd_soc_card {
 #endif /* CONFIG_SND_SOC_AW87XXX */
 
 	void *drvdata;
+
+	spinlock_t dpcm_lock;
 };
 
 /* SoC machine DAI configuration, glues a codec and cpu DAI together */
